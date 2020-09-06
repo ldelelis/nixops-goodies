@@ -38,6 +38,4 @@ in
     };
   };
   kubernetes-node-1 = kubernetesNode;
-  kubernetes-node-2 = kubernetesNode;
-  kubernetes-node-3 = kubernetesNode;
 }

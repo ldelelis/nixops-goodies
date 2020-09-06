@@ -39,10 +39,17 @@ in
       };
       addons.dns.enable = true;
     };
+
+    # FIXME: this is.... bad. etcd depends on some certificates generated during runtime by
+    # what assume is certmgr. Since the cert creation is done _after_ start, we can't depend
+    # on the service itself, but we can give an educated guess on how long it takes to generate
+    # these certs
+    # Theres's probably a better way to do this.... but I can't come up with it
+    # PRs welcome :)
+    systemd.services.etcd.serviceConfig.ExecStartPre = "/run/current-system/sw/bin/sleep 30";
+
     networking.firewall.allowedTCPPorts = [ 8888 443 22 ];
   };
 
   kubernetes-node-1 = kubernetesNode;
-  kubernetes-node-2 = kubernetesNode;
-  kubernetes-node-3 = kubernetesNode;
 }
