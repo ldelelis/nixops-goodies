@@ -9,6 +9,19 @@ let
     nixpkgs_branch = "nixos-20.03";
     nixpkgs_rev = "5272327b81ed355bbed5659b8d303cf2979b6953";
   };
+  kubernetesNode = {
+    config, pkgs, ...
+  } : {
+    deployment = {
+      targetEnv = "virtualbox";
+      virtualbox = {
+        disks.disk1.baseImage = baseImage;
+        memorySize = 2048;
+        vcpu = 1;
+        headless = true;
+      };
+    };
+  };
 in
 {
   kubernetes-master = {
@@ -24,17 +37,7 @@ in
       };
     };
   };
-  kubernetes-nodes = {
-    config, pkgs, ...
-  } : {
-    deployment = {
-      targetEnv = "virtualbox";
-      virtualbox = {
-        disks.disk1.baseImage = baseImage;
-        memorySize = 4096;
-        vcpu = 1;
-        headless = true;
-      };
-    };
-  };
+  kubernetes-node-1 = kubernetesNode;
+  kubernetes-node-2 = kubernetesNode;
+  kubernetes-node-3 = kubernetesNode;
 }

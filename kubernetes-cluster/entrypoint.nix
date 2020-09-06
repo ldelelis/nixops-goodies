@@ -1,26 +1,7 @@
 let
   kubeMasterHostname = "kubernetes-master";
   kubeMasterAPIServerPort = 443;
-in
-{
-  network.description = "Kubernetes Master";
-
-  kubernetes-master = {
-    config, pkgs, ...
-  } : {
-    services.kubernetes = {
-      roles = [ "master" ];
-      masterAddress = kubeMasterHostname;
-      apiserver = {
-        securePort = kubeMasterAPIServerPort;
-        advertiseAddress = config.networking.privateIPv4;
-      };
-      addons.dns.enable = true;
-    };
-    networking.firewall.allowedTCPPorts = [ 8888 443 22 ];
-  };
-
-  kubernetes-nodes = {
+  kubernetesNode = {
     config, pkgs, ...
   } :
   let
@@ -42,4 +23,26 @@ in
 
     networking.firewall.enable = false;
   };
+in
+{
+  network.description = "Kubernetes Cluster";
+
+  kubernetes-master = {
+    config, pkgs, ...
+  } : {
+    services.kubernetes = {
+      roles = [ "master" ];
+      masterAddress = kubeMasterHostname;
+      apiserver = {
+        securePort = kubeMasterAPIServerPort;
+        advertiseAddress = config.networking.privateIPv4;
+      };
+      addons.dns.enable = true;
+    };
+    networking.firewall.allowedTCPPorts = [ 8888 443 22 ];
+  };
+
+  kubernetes-node-1 = kubernetesNode;
+  kubernetes-node-2 = kubernetesNode;
+  kubernetes-node-3 = kubernetesNode;
 }
